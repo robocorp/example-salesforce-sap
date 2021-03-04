@@ -2,7 +2,7 @@ from hdbcli import dbapi
 import logging
 
 
-class CustomSap:
+class SapHanaDatabaseLibrary:
     def __init__(self):
         self._conn = None
         self.logger = logging.getLogger(__name__)

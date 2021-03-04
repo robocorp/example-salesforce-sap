@@ -1,0 +1,13 @@
+<h1>Salesforce Account</h1>
+<p><b>SFDC Account Id:</b> ${account_id}</h4>
+<hr>
+<table>
+    <tr><td width="200"><b>Account Number</b></td><td width="200">${account_number}</td></tr>
+    <tr><td width="200"><b>Account Name</b></td><td width="200">${account_name}</td></tr>
+    <tr><td width="200"><b>Billing Street</b></td><td width="200">${billing_street}</td></tr>
+    <tr><td width="200"><b>Billing City</b></td><td width="200">${billing_city}</td></tr>
+    <tr><td width="200"><b>Billing State</b></td><td width="200">${billing_state}</td></tr>
+    <tr><td width="200"><b>Shipping Street</b></td><td width="200">${shipping_street}</td></tr>
+</table>
+<hr>
+<p>Created: ${timestamp}</p>
