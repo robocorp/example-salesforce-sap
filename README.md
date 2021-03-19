@@ -108,12 +108,12 @@ The [`RPA.PDF`](https://robocorp.com/docs/libraries/rpa-framework/rpa-pdf) libra
 
 The [`RPA.Dialogs`](https://robocorp.com/docs/libraries/rpa-framework/rpa-dialogs) library manages attended UI interface.
 
-The [`RobocloudLibrary`](libraries/RobocloudLibrary.py) custom library is used to manage Robocloud processes via Process API.
+The [`RobocloudLibrary`](https://github.com/robocorp/example-salesforce-sap/blob/master/libraries/RobocloudLibrary.py) custom library is used to manage Robocloud processes via Process API.
 
 Other Robotframework libraries in use are [`Collections`](https://robocorp.com/docs/libraries/built-in/collections),  [`OperatingSystem`](https://robocorp.com/docs/libraries/built-in/operatingsystem) and  [`String`](https://robocorp.com/docs/libraries/built-in/string)
 ## Configuration
 
-Common variables for the robot are stored in [`variables.py`](resources/variables.py) file.
+Common variables for the robot are stored in [`variables.py`](https://github.com/robocorp/example-salesforce-sap/blob/master/resources/variables.py) file.
 
 The Google Drive credentials and several other sensitive data has been stored into Robocorp Vault.
 
