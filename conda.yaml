@@ -12,5 +12,5 @@ dependencies:
   - pip:
     # Define pip packages here.
     # https://pypi.org/
-    - rpaframework[google]==7.6.0 # https://rpaframework.org/releasenotes.html
-    # - hdbcli==2.7.23
+    - robotframework==4.0
+    - rpaframework[google]==8.2.0 # https://rpaframework.org/releasenotes.html

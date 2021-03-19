@@ -1,6 +1,6 @@
 tasks:
   List accounts from SAP:
-    shell: python -m robot -d output -L TRACE -t "List accounts from SAP" tasks.robot
+    robotTaskName: List accounts from SAP
   List accounts from Salesforce:
     robotTaskName: List accounts from Salesforce
   List accounts from Salesforce (no browser):
@@ -9,16 +9,11 @@ tasks:
     robotTaskName: Create New Accounts to Salesforce
   Account Compare Salesforce Against SAP:
     robotTaskName: Compare Salesforce and SAP accounts
-  DebugLibrary:
-    shell: python .\\libraries\\RobocorpWSLibrary.py
   Fix Comparison Errors:
     robotTaskName: Fix comparison errors
   Fix Account Name in SFDC:
     robotTaskName: Fix Account Name in SFDC
-  SAP Create Accounts:
-    robotTaskName: SAP Create Accounts
-  Check Work Item Payload:
-    robotTaskName: Check Work Item Payload
+
 
 condaConfigFile: conda.yaml
 artifactsDir: output

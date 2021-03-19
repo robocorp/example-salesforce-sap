@@ -1,29 +1,19 @@
 *** Settings ***
 Resource          common.resource
 
-*** Variables ***
-@{ACCOUNT_PROPERTIES}    Id
-...               Name
-...               AccountNumber
-...               BillingAddress
-...               BillingStreet
-...               BillingCity
-...               BillingState
-...               ShippingStreet
-
 *** Keywords ***
 Salesforce API Authorize
     ${secrets}=    Get Secret    salesforce
     Auth With Token
-    ...    username=${secrets}[USERNAME]
-    ...    password=${secrets}[PASSWORD]
-    ...    api_token=${secrets}[API_TOKEN]
+    ...    username=${secrets}[api_username]
+    ...    password=${secrets}[api_password]
+    ...    api_token=${secrets}[api_token]
 
 *** Keywords ***
 Salesforce List Accounts
     ${columns}    Create List    NAME    ID    ACCOUNT
     ${customer_table}    Create Table    columns=${columns}
-    ${account_properties}=    Evaluate    ",".join(${ACCOUNT_PROPERTIES})
+    ${account_properties}=    Evaluate    ",".join(${SFDC_ACCOUNT_PROPERTIES})
     ${accounts}=    Salesforce Query Result As Table    SELECT ${account_properties} FROM account
     FOR    ${ac}    IN    @{accounts}
         ${row}=    Create Dictionary    NAME=${ac}[Name]    ID=${ac}[Id]    ACCOUNT=${ac}[AccountNumber]
@@ -36,17 +26,25 @@ Salesforce List Accounts
 
 *** Keywords ***
 Salesforce Add or Update Accounts
-    # Retrieve file with assistant ?
+    [Documentation]    This keyword was used to enter test data into Salesforce
     ${table}=    Read Table From Csv    sap_customers.csv
     FOR    ${cus}    IN    @{table}
         ${account}=    Salesforce Query Result As Table    SELECT Id FROM Account WHERE Name = '${cus}[NAME]'
         ${account_len}=    Get Length    ${account}
-        #${tab}=    Describe Salesforce Object    Account
-        #Log Many    ${tab}
         ${obj}=    Create Dictionary    Name=${cus}[NAME]    AccountNumber=${cus}[ID]
-        Run Keyword If    ${account_len}==1    Upsert Salesforce Object    Account    ${account}[0][0]    ${obj}
-        Run Keyword If    ${account_len}==0    Create Salesforce Object    Account    ${obj}
+        IF    ${account_len}==1
+        Upsert Salesforce Object    Account    ${account}[0][0]    ${obj}
+        ELSE IF    ${account_len}==0
+        Create Salesforce Object    Account    ${obj}
+        END
     END
+
+*** Keywords ***
+Salesforce describe table
+    [Documentation]    Can be used to describe SFDC table fields
+    [Arguments]    ${table}
+    ${tab}=    Describe Salesforce Object    ${table}
+    Log Many    ${tab}
 
 *** Keywords ***
 Salesforce Add Product Orders For Account
@@ -62,26 +60,14 @@ Salesforce Add Product Orders For Account
     END
 
 *** Keywords ***
-Executing dataloader
-    [Arguments]    ${orders}
-    ${status}=    Execute Dataloader Insert    ${orders}    mapping    Tilaus__c
-    ${successes}=    Get Dataloader Success Table
-    ${errors}=    Get Dataloader Error Table
-
-*** Keywords ***
 Salesforce Account Screenshots
-    # https://trailblazers.salesforce.com/answers?id=90630000000glBgAAI
     ${secrets}=    Get Secret    salesforce
-    Open Available Browser    ${secrets}[WEBSITE]?source=lex    user_agent=${USER_AGENT}
-    Browser.Input Text    id:username    ${secrets}[WEB_USERNAME]
-    Browser.Input Password    id:password    ${secrets}[WEB_PASSWORD]
+    Open Available Browser    ${secrets}[website]?source=lex    user_agent=${USER_AGENT}
+    Browser.Input Text    id:username    ${secrets}[web_username]
+    Browser.Input Password    id:password    ${secrets}[web_password]
     Browser.Click Element    id:Login
-    #${code}=    Get verification code from Email
-    #Browser.Input Text    id:emc    ${code}
-    #Browser.Click Element    id:save
     Sleep    10s
     Desktop.Press Keys    esc
-    #Browser.Go To    https://eu31.lightning.force.com/lightning/o/Account/list?filterName=Recent
     ${table}=    Read Table From Csv    salesforce_customers.csv
     FOR    ${cus}    IN    @{table}
         Browser.Go To    https://eu31.salesforce.com/${cus}[ID]?source=lex
@@ -93,9 +79,7 @@ Salesforce Account Screenshots
 *** Keywords ***
 Salesforce Account Screenshots With API
     [Arguments]    ${accounts}
-    #${tab}=    Describe Salesforce Object    Account
-    #Log Many    ${tab}
-    ${template}=    Get File    ${CURDIR}${/}sfdc_account.template
+    ${template}=    Get File    ${OUTPUT_DIR}${/}sfdc_account.template
     FOR    ${ac}    IN    @{accounts}
         Log Many    ${ac}
         ${account_id}=    Set Variable    ${ac}[Id]
@@ -107,5 +91,19 @@ Salesforce Account Screenshots With API
         ${billing_state}=    Set Variable    ${ac}[BillingState]
         ${timestamp}=    Get Time
         ${document}=    Replace Variables    ${template}
-        HTML To PDF    ${document}    ${EXECDIR}${/}output${/}sfdc_account_${ac}[AccountNumber].pdf
+        HTML To PDF    ${document}    ${OUTPUT_DIR}${/}sfdc_account_${ac}[AccountNumber].pdf
+    END
+
+*** Keywords ***
+Salesforce Create or Modify Accounts
+    [Arguments]    ${customers}
+    FOR    ${cus}    IN    @{customers}
+        ${account}=    Salesforce Query Result As Table    SELECT Id FROM Account WHERE AccountNumber = '${cus}[id]'
+        ${account_len}=    Get Length    ${account}
+        ${obj}=    Create Dictionary    Name=${cus}[name]    AccountNumber=${cus}[id]
+        IF    ${account_len}==1
+        Upsert Salesforce Object    Account    ${account}[0][0]    ${obj}
+        ELSE IF    ${account_len}==0
+        Create Salesforce Object    Account    ${obj}
+        END
     END

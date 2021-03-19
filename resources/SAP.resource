@@ -1,18 +1,6 @@
 *** Settings ***
 Resource          common.resource
 
-*** Variables ***
-${EXE_PAD}        C:${/}Program Files (x86)${/}SAP${/}FrontEnd${/}SAPgui${/}saplgpad.exe
-${EXE_LOGON}      C:${/}Program Files (x86)${/}SAP${/}FrontEnd${/}SAPgui${/}saplogon.exe
-${TITLE_PAD}      SAP Logon Pad 760
-${TITLE_LOGON}    SAP Logon 760
-${FIELD_CLIENT}    wnd[0]/usr/txtRSYST-MANDT
-${FIELD_USER}     wnd[0]/usr/txtRSYST-BNAME
-${FIELD_PASSWORD}    wnd[0]/usr/pwdRSYST-BCODE
-${FIELD_TRANSACTION}    wnd[0]/tbar[0]/okcd
-${FIELD_XD03_CUSTOMER_ID}    wnd[1]/usr/ctxtRF02D-KUNNR
-@{CUSTOMERS}      3511    3691    3690    3574    3512    3505    3504
-
 *** Keywords ***
 Open SAP Logon 760
     Windows.Open Executable    ${EXE_LOGON}    ${TITLE_LOGON}
@@ -35,35 +23,38 @@ SAP Gui Login
 
 *** Keywords ***
 SAP Get List of Customers
+    [Documentation]    Gets customers defined with @{CUSTOMERS} variable
     SAP Get Easy Access Window Area
     ${columns}    Create List    NAME    ID
     ${customer_table}    Create Table    columns=${columns}
-    FOR    ${CUSTOMER}    IN    @{CUSTOMERS}
+    FOR    ${CUSTOMER}    IN    @{SAP_CUSTOMERS}
         SAP.Run Transaction    /nxd03
         SAP.Input Text    ${FIELD_XD03_CUSTOMER_ID}    ${CUSTOMER}
         SAP.Send Vkey    0
         ${customer_name}=    SAP Get account name
         ${row}=    Create Dictionary    NAME=${customer_name}    ID=${CUSTOMER}
         Add Table Row    ${customer_table}    ${row}
-        Log Many    ${windowarea}
-        Run Keyword Unless    "${windowarea}"=="${NONE}"    Desktop.Take Screenshot    ${CURDIR}${/}output${/}sap_account_${CUSTOMER}.png    ${windowarea}
+        Run Keyword Unless    "${windowarea}"=="${NONE}"    Desktop.Take Screenshot    ${OUTPUT_DIR}${/}sap_account_${CUSTOMER}.png    ${windowarea}
     END
-    Write Table To Csv    ${customer_table}    sap_customers.csv
-    Add Work Item file    sap_customers.csv
+    Write Table To Csv    ${customer_table}    ${SALESFORCE_CSV}
+    Add Work Item file    ${SALESFORCE_CSV}
     Save Work Item
+    Remove File    ${SALESFORCE_CSV}
 
 *** Keywords ***
 SAP Get Easy Access Window Area
     ${wins}=    Get Window List
     Set Task Variable    ${windowarea}    ${NONE}
     FOR    ${win}    IN    @{WINS}
-        Run Keyword If    "${win}[title]"=="SAP Easy Access"    Set Window Area    ${win}[rectangle]
+        IF    "${win}[title]"=="SAP Easy Access"
+        Set Window Area    ${win}[rectangle]
+        END
         Exit For Loop If    "${win}[title]"=="SAP Easy Access"
     END
 
 *** Keywords ***
 SAP Get account name
-    ${customer_name}=    SAP.Get Value    wnd[0]/usr/subSUBTAB:SAPLATAB:0100/tabsTABSTRIP100/tabpTAB01/ssubSUBSC:SAPLATAB:0201/subAREA1:SAPMF02D:7111/subADDRESS:SAPLSZA1:0300/subCOUNTRY_SCREEN:SAPLSZA1:0301/txtADDR1_DATA-NAME1
+    ${customer_name}=    SAP.Get Value    ${FIELD_ACCOUNT_NAME}
     [Return]    ${customer_name}
 
 *** Keywords ***
@@ -73,6 +64,7 @@ SAP Compare Against Salesforce Accounts
     ${comptable}=    Create Table    columns=${columns}
     ${salesforce_file}=    Get work item file    salesforce_customers.csv
     ${table}=    Read Table From Csv    ${salesforce_file}
+    Remove File    salesforce_customers.csv
     FOR    ${cus}    IN    @{table}
         Log Many    ${table}
         SAP.Run Transaction    /nxd03
@@ -91,26 +83,15 @@ SAP Compare Against Salesforce Accounts
         ...    Account In SAP=${exists_ok}
         ...    Name OK in SFDC=${account_name_diff}
         Add Table Row    ${comptable}    ${row}
-        Run Keyword Unless    "${windowarea}"=="${NONE}"    Desktop.Take Screenshot    ${OUTPUT_DIR}${/}sap_account_${cus}[ACCOUNT].png    ${windowarea}
+        IF    "${windowarea}"!="${NONE}"
+        Desktop.Take Screenshot    ${OUTPUT_DIR}${/}sap_account_${cus}[ACCOUNT].png    ${windowarea}
+        END
     END
     Write Table To Csv    ${comptable}    ${OUTPUT_DIR}${/}compare_sfdc_to_sap.csv
-    Create Workbook    compare_sfdc_to_sap.xlsx
+    Create Workbook    ${COMPARISON_EXCEL}
     Append Rows To Worksheet    ${comptable}    header=True
     Save Workbook
-    Drive Upload File    compare_sfdc_to_sap.xlsx    aligntech    overwrite=True
-    Copy File    compare_sfdc_to_sap.xlsx    ${OUTPUT_DIR}${/}
-    #Copy File    compare_sfdc_to_sap.xlsx    %{USERPROFILE}${/}STORAGE
-
-*** Keywords ***
-SAP Get List of Sales Orders
-    SAP.Run Transaction    VA03
-    SAP.Send Vkey    0
-# *** Keywords ***
-# Get data from SAP Hana database
-#    ${secrets}=    Get Secret    sap_db1
-#    Custom Connector    ${secrets}
-#    @{rows}=    Custom Query    SELECT * FROM DB_1.COMMUNITY
-#    [Return]    ${rows}
+    Drive Upload File    ${COMPARISON_EXCEL}    ${GOOGLE_DRIVE_SYNC_FOLDER}    overwrite=True
 
 *** Keywords ***
 SAP Graceful Exit
@@ -119,9 +100,3 @@ SAP Graceful Exit
     Run Keyword And Ignore Error    SAP.Send VKey    ALT + F4
     Run Keyword And Ignore Error    SAP.Send VKey    0
     Windows.Close All Applications
-
-*** Keywords ***
-SAP Create Account
-    [Arguments]    ${data}
-    [Documentation]    To be implemented
-    Log Many    ${account}
