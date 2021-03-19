@@ -1,6 +1,8 @@
 # A robot that compares account data between Salesforce and SAP
 
-This robot demonstrates how to get accounts details from [Salesforce](https://www.salesforce.com/) and [SAP](https://www.sap.com/). Robot also can start process to fix accounts in Salesforce if the Salesforce account data does not match account data in SAP.
+This robot demonstrates how to get accounts details from [Salesforce](https://www.salesforce.com/) and [SAP](https://www.sap.com/). 
+
+Robot can be used to start process to fix accounts in Salesforce if the Salesforce account data does not match account data in SAP.
 
 ## Task descriptions
 
