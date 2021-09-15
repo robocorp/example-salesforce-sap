@@ -9,7 +9,7 @@ Library           RPA.Desktop.Windows    WITH NAME    Windows
 Library           RPA.Dialogs    WITH NAME    Dialogs
 Library           RPA.Excel.Files
 Library           RPA.PDF
-Library           RPA.Robocloud.Items
+Library           RPA.Robocorp.WorkItems
 Library           RPA.Robocloud.Secrets
 Library           RPA.Salesforce
 Library           RPA.SAP    WITH NAME    SAP
