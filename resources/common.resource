@@ -10,7 +10,7 @@ Library           RPA.Dialogs    WITH NAME    Dialogs
 Library           RPA.Excel.Files
 Library           RPA.PDF
 Library           RPA.Robocorp.WorkItems
-Library           RPA.Robocloud.Secrets
+Library           RPA.Robocorp.Vault
 Library           RPA.Salesforce
 Library           RPA.SAP    WITH NAME    SAP
 Library           RPA.Tables
