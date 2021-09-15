@@ -2,7 +2,7 @@ import copy
 import json
 import requests
 from RPA.Cloud.Google import Google
-from RPA.Robocloud.Secrets import Secrets
+from RPA.Robocorp.Vault import Vault
 from RPA.Excel.Files import Files
 from RPA.Tables import Tables
 from resources.variables import (
@@ -18,7 +18,7 @@ class ControlRoomLibrary:
         self._set_request()
 
     def _set_request(self):
-        secrets = Secrets().get_secret("cloud_api")
+        secrets = Vault().get_secret("cloud_api")
         self._api_url = f"{ROBOCLOUD_PROCESS_API}/workspaces/{secrets['workspace_id']}"
         self._api_headers = {
             "accept": "application/json",
