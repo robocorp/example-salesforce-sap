@@ -13,7 +13,7 @@ from resources.variables import (
 )
 
 
-class RobocloudLibrary:
+class ControlRoomLibrary:
     def __init__(self):
         self._set_request()
 

@@ -14,7 +14,7 @@ Library           RPA.Robocorp.Vault
 Library           RPA.Salesforce
 Library           RPA.SAP    WITH NAME    SAP
 Library           RPA.Tables
-Library           RobocloudLibrary
+Library           ControlRoomLibrary
 Variables         variables.py
 
 *** Keywords ***
