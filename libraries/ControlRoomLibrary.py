@@ -8,8 +8,8 @@ from RPA.Tables import Tables
 from resources.variables import (
     COMPARISON_EXCEL,
     GOOGLE_DRIVE_SYNC_FOLDER,
-    ROBOCLOUD_PROCESS_API,
-    ROBOCLOUD_PROCESS_FIX_SFDC,
+    CONTROL_ROOM_PROCESS_API,
+    CONTROL_ROOM_PROCESS_FIX_SFDC,
 )
 
 
@@ -19,7 +19,7 @@ class ControlRoomLibrary:
 
     def _set_request(self):
         secrets = Vault().get_secret("cloud_api")
-        self._api_url = f"{ROBOCLOUD_PROCESS_API}/workspaces/{secrets['workspace_id']}"
+        self._api_url = f"{CONTROL_ROOM_PROCESS_API}/workspaces/{secrets['workspace_id']}"
         self._api_headers = {
             "accept": "application/json",
             "Content-Type": "application/json",
@@ -35,19 +35,22 @@ class ControlRoomLibrary:
         excel = Files()
         google = Google()
         conflicts = []
-        updated_table = tables.export_table(original, with_index=True, as_list=False)
+        updated_table = tables.export_table(
+            original, with_index=True, as_list=False)
         for k in data.keys():
             copyof_orig = copy.deepcopy(original)
             if "nameerror" in k:
                 mid, _ = data[k].split(" - ")
-                tables.filter_table_by_column(copyof_orig, "Account Id", "==", mid)
+                tables.filter_table_by_column(
+                    copyof_orig, "Account Id", "==", mid)
                 row = tables.get_table_row(copyof_orig, 0)
                 conflicts.append({"id": mid, "name": row["Name in SAP"]})
                 name_position = updated_table["Account Id"].index(mid)
                 updated_table["Name OK in SFDC"][name_position] = "TRUE"
 
         if conflicts:
-            self.robocloud_run_process(ROBOCLOUD_PROCESS_FIX_SFDC, conflicts)
+            self.robocloud_run_process(
+                CONTROL_ROOM_PROCESS_FIX_SFDC, conflicts)
 
         google.set_robocloud_vault(
             vault_name="googlecloud", vault_secret_key="credentials"
