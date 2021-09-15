@@ -142,7 +142,7 @@ Create a new file: `/Users/<username>/vault.json`
     "api_password": "SALESFORCE-API-PASSWORD",
     "api_token": "SALESFORCE-API-TOKEN"
   },
-  "cloud_api": {
+  "control_room_api": {
     "workspace_id": "CONTROL-ROOM-WORKSPACE-ID",
     "process_api_secret_key": "PROCESS-API-KEY",
     "compare_process_id": "PROCESS-ID-FOR-COMPARE-PROCESS",
@@ -180,7 +180,7 @@ Create a new file: `/Users/<username>/items.json`
 
 ### Control Room vault
 
-Create new secrets with names `sap_ides`, `cloud_api` and `salesforce`. The key-value pairs can be seen above in the `vault.json`.
+Create new secrets with names `sap_ides`, `control_room_api` and `salesforce`. The key-value pairs can be seen above in the `vault.json`.
 
 ## I want to learn more!
 

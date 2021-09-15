@@ -18,7 +18,7 @@ class ControlRoomLibrary:
         self._set_request()
 
     def _set_request(self):
-        secrets = Vault().get_secret("cloud_api")
+        secrets = Vault().get_secret("control_room_api")
         self._api_url = f"{CONTROL_ROOM_PROCESS_API}/workspaces/{secrets['workspace_id']}"
         self._api_headers = {
             "accept": "application/json",
