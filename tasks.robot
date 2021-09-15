@@ -37,7 +37,7 @@ Create New Accounts to Salesforce
 Fix comparison errors
     ${rows}=    Get Comparison Excel from Google Drive
     ${response}=    Create Form For User    ${rows}
-    Robocloud Start Fix Process    ${response}    ${rows}
+    Control Room Start Fix Process    ${response}    ${rows}
 
 *** Tasks ***
 Fix Account Name in SFDC

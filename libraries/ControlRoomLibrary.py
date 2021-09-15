@@ -30,7 +30,7 @@ class ControlRoomLibrary:
             "fix_sfdc_name": secrets["fix_sfdc_name_process_id"],
         }
 
-    def robocloud_start_fix_process(self, data, original):
+    def control_room_start_fix_process(self, data, original):
         tables = Tables()
         excel = Files()
         google = Google()
@@ -49,13 +49,13 @@ class ControlRoomLibrary:
                 updated_table["Name OK in SFDC"][name_position] = "TRUE"
 
         if conflicts:
-            self.robocloud_run_process(
+            self.control_room_run_process(
                 CONTROL_ROOM_PROCESS_FIX_SFDC, conflicts)
 
-        google.set_robocloud_vault(
+        google.set_robocorp_vault(
             vault_name="googlecloud", vault_secret_key="credentials"
         )
-        google.init_drive_client(use_robocloud_vault=True)
+        google.init_drive(use_robocorp_vault=True)
         del updated_table["index"]
         excel.create_workbook(COMPARISON_EXCEL)
         excel.append_rows_to_worksheet(updated_table, header=True)
@@ -64,7 +64,7 @@ class ControlRoomLibrary:
             COMPARISON_EXCEL, GOOGLE_DRIVE_SYNC_FOLDER, overwrite=True
         )
 
-    def robocloud_run_process(self, process_name, data):
+    def control_room_run_process(self, process_name, data):
         process_id = self._processes[process_name]
         jsondata = {"variables": data}
         response = requests.post(
