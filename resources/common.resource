@@ -46,9 +46,9 @@ Google Drive Download Specific File
     ...    query=name contains '${filename}'
     ...    folder_name=${folder}
     IF    len(${files}) == 1
-    Drive Download Files    file_dict=${files}[0]
+        Drive Download Files    file_dict=${files}[0]
     ELSE
-    Fail    Could not find file '${filename}' in folder '${folder}'
+        Fail    Could not find file '${filename}' in folder '${folder}'
     END
 
 *** Keywords ***
@@ -68,19 +68,19 @@ Create Form For User
     FOR    ${row}    IN    @{rows}
         ${account_name}=    Replace String    ${row}[Name in SFDC]    ,    ${EMPTY}
         IF    "FALSE" in "${row}[Name OK in SFDC]" and "${row}[Account In SAP]"=="TRUE" and "${row}[Name in SAP]" != "None"
-        Append To List
-        ...    ${name_errors}
-        ...    ${row}[Account Id] - ${account_name} [in SAP -> ${row}[Name in SAP]]
+            Append To List
+            ...    ${name_errors}
+            ...    ${row}[Account Id] - ${account_name} [in SAP -> ${row}[Name in SAP]]
         END
     END
     ${name_string}=    Evaluate    ",".join(${name_errors})
     Create Form    Validate SFDC accounts against SAP
     IF    ${name_errors}
-    Add Checkbox    label=Fix account name in SFDC
-    ...    element_id=nameerror
-    ...    options=${name_string}
+        Add Checkbox    label=Fix account name in SFDC
+        ...    element_id=nameerror
+        ...    options=${name_string}
     ELSE
-    Add Text    Nothing to fix. <br><br>SFDC account names match SAP account names.
+        Add Text    Nothing to fix. <br><br>SFDC account names match SAP account names.
     END
     &{response}=    Request Response
     [Return]    ${response}
