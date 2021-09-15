@@ -36,17 +36,17 @@ Find text in lines
 
 *** Keywords ***
 Google Drive Initialization
-    Set Robocloud Vault    vault_name=googlecloud    vault_secret_key=credentials
-    Init Drive Client    use_robocloud_vault=True
+    Set Robocorp Vault    vault_name=googlecloud    vault_secret_key=credentials
+    Init Drive    use_robocorp_vault=True
 
 *** Keywords ***
 Google Drive Download Specific File
     [Arguments]    ${filename}    ${folder}=${GOOGLE_DRIVE_SYNC_FOLDER}
-    ${files}=    Drive Search Files
+    ${files}=    Search Drive Files
     ...    query=name contains '${filename}'
     ...    folder_name=${folder}
     IF    len(${files}) == 1
-        Drive Download Files    file_dict=${files}[0]
+        Download Drive Files    file_dict=${files}[0]
     ELSE
         Fail    Could not find file '${filename}' in folder '${folder}'
     END

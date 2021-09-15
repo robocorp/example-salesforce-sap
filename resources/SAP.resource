@@ -91,7 +91,7 @@ SAP Compare Against Salesforce Accounts
     Create Workbook    ${COMPARISON_EXCEL}
     Append Rows To Worksheet    ${comptable}    header=True
     Save Workbook
-    Drive Upload File    ${COMPARISON_EXCEL}    ${GOOGLE_DRIVE_SYNC_FOLDER}    overwrite=True
+    Upload Drive File    ${COMPARISON_EXCEL}    ${GOOGLE_DRIVE_SYNC_FOLDER}    overwrite=True
 
 *** Keywords ***
 SAP Graceful Exit
