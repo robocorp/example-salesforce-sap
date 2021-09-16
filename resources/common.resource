@@ -73,14 +73,16 @@ Create Form For User
             ...    ${row}[Account Id] - ${account_name} [in SAP -> ${row}[Name in SAP]]
         END
     END
-    ${name_string}=    Evaluate    ",".join(${name_errors})
-    Create Form    Validate SFDC accounts against SAP
+    Add heading    Validate SFDC accounts against SAP
     IF    ${name_errors}
-        Add Checkbox    label=Fix account name in SFDC
-        ...    element_id=nameerror
-        ...    options=${name_string}
+        Add text    Fix account name in SFDC
+        FOR    ${index}    ${name}    IN ENUMERATE    @{name_errors}    start=1
+            Add Checkbox
+            ...    name=nameerror${index}
+            ...    label=${name}
+        END
     ELSE
-        Add Text    Nothing to fix. <br><br>SFDC account names match SAP account names.
+        Add text    Nothing to fix. SFDC account names match SAP account names.
     END
-    &{response}=    Request Response
+    ${response}=    Run dialog
     [Return]    ${response}
