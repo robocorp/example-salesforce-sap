@@ -47,7 +47,7 @@ SAP Get Easy Access Window Area
     Set Task Variable    ${windowarea}    ${NONE}
     FOR    ${win}    IN    @{WINS}
         IF    "${win}[title]"=="SAP Easy Access"
-        Set Window Area    ${win}[rectangle]
+            Set Window Area    ${win}[rectangle]
         END
         Exit For Loop If    "${win}[title]"=="SAP Easy Access"
     END
@@ -84,14 +84,14 @@ SAP Compare Against Salesforce Accounts
         ...    Name OK in SFDC=${account_name_diff}
         Add Table Row    ${comptable}    ${row}
         IF    "${windowarea}"!="${NONE}"
-        Desktop.Take Screenshot    ${OUTPUT_DIR}${/}sap_account_${cus}[ACCOUNT].png    ${windowarea}
+            Desktop.Take Screenshot    ${OUTPUT_DIR}${/}sap_account_${cus}[ACCOUNT].png    ${windowarea}
         END
     END
     Write Table To Csv    ${comptable}    ${OUTPUT_DIR}${/}compare_sfdc_to_sap.csv
     Create Workbook    ${COMPARISON_EXCEL}
     Append Rows To Worksheet    ${comptable}    header=True
     Save Workbook
-    Drive Upload File    ${COMPARISON_EXCEL}    ${GOOGLE_DRIVE_SYNC_FOLDER}    overwrite=True
+    Upload Drive File    ${COMPARISON_EXCEL}    ${GOOGLE_DRIVE_SYNC_FOLDER}    overwrite=True
 
 *** Keywords ***
 SAP Graceful Exit

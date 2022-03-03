@@ -9,12 +9,12 @@ Library           RPA.Desktop.Windows    WITH NAME    Windows
 Library           RPA.Dialogs    WITH NAME    Dialogs
 Library           RPA.Excel.Files
 Library           RPA.PDF
-Library           RPA.Robocloud.Items
-Library           RPA.Robocloud.Secrets
+Library           RPA.Robocorp.WorkItems
+Library           RPA.Robocorp.Vault
 Library           RPA.Salesforce
 Library           RPA.SAP    WITH NAME    SAP
 Library           RPA.Tables
-Library           RobocloudLibrary
+Library           ControlRoomLibrary
 Variables         variables.py
 
 *** Keywords ***
@@ -36,19 +36,19 @@ Find text in lines
 
 *** Keywords ***
 Google Drive Initialization
-    Set Robocloud Vault    vault_name=googlecloud    vault_secret_key=credentials
-    Init Drive Client    use_robocloud_vault=True
+    Set Robocorp Vault    vault_name=googlecloud    vault_secret_key=credentials
+    Init Drive    use_robocorp_vault=True
 
 *** Keywords ***
 Google Drive Download Specific File
     [Arguments]    ${filename}    ${folder}=${GOOGLE_DRIVE_SYNC_FOLDER}
-    ${files}=    Drive Search Files
+    ${files}=    Search Drive Files
     ...    query=name contains '${filename}'
     ...    folder_name=${folder}
     IF    len(${files}) == 1
-    Drive Download Files    file_dict=${files}[0]
+        Download Drive Files    file_dict=${files}[0]
     ELSE
-    Fail    Could not find file '${filename}' in folder '${folder}'
+        Fail    Could not find file '${filename}' in folder '${folder}'
     END
 
 *** Keywords ***
@@ -68,19 +68,21 @@ Create Form For User
     FOR    ${row}    IN    @{rows}
         ${account_name}=    Replace String    ${row}[Name in SFDC]    ,    ${EMPTY}
         IF    "FALSE" in "${row}[Name OK in SFDC]" and "${row}[Account In SAP]"=="TRUE" and "${row}[Name in SAP]" != "None"
-        Append To List
-        ...    ${name_errors}
-        ...    ${row}[Account Id] - ${account_name} [in SAP -> ${row}[Name in SAP]]
+            Append To List
+            ...    ${name_errors}
+            ...    ${row}[Account Id] - ${account_name} [in SAP -> ${row}[Name in SAP]]
         END
     END
-    ${name_string}=    Evaluate    ",".join(${name_errors})
-    Create Form    Validate SFDC accounts against SAP
+    Add heading    Validate SFDC accounts against SAP
     IF    ${name_errors}
-    Add Checkbox    label=Fix account name in SFDC
-    ...    element_id=nameerror
-    ...    options=${name_string}
+        Add text    Fix account name in SFDC
+        FOR    ${index}    ${name}    IN ENUMERATE    @{name_errors}    start=1
+            Add Checkbox
+            ...    name=nameerror${index}
+            ...    label=${name}
+        END
     ELSE
-    Add Text    Nothing to fix. <br><br>SFDC account names match SAP account names.
+        Add text    Nothing to fix. SFDC account names match SAP account names.
     END
-    &{response}=    Request Response
+    ${response}=    Run dialog
     [Return]    ${response}

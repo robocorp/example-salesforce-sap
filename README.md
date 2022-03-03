@@ -1,12 +1,12 @@
 # A robot that compares account data between Salesforce and SAP
 
-This robot demonstrates how to get accounts details from [Salesforce](https://www.salesforce.com/) and [SAP](https://www.sap.com/). 
+This robot demonstrates how to get accounts details from [Salesforce](https://www.salesforce.com/) and [SAP](https://www.sap.com/).
 
 Robot can be used to start process to fix accounts in Salesforce if the Salesforce account data does not match account data in SAP.
 
 ## Task descriptions
 
-This robot includes several different tasks and their task descriptions are provided below. The tasks that are started either via Robocorp Cloud or using Robocorp Assistant are **Compare Salesforce and SAP accounts** and **Fix comparison errors**.
+This robot includes several different tasks and their task descriptions are provided below. The tasks that are started either via Control Room or using Robocorp Assistant are **Compare Salesforce and SAP accounts** and **Fix comparison errors**.
 
 ### **Task**: `Compare Salesforce and SAP accounts`
 
@@ -61,7 +61,7 @@ Compare Salesforce and SAP accounts
 Fix comparison errors
     ${rows}=    Get Comparison Excel from Google Drive
     ${response}=    Create Form For User    ${rows}
-    Robocloud Start Fix Process    ${response}    ${rows}
+    Control Room Start Fix Process    ${response}    ${rows}
 
 List accounts from SAP
     SAP Gui Login
@@ -110,9 +110,10 @@ The [`RPA.PDF`](https://robocorp.com/docs/libraries/rpa-framework/rpa-pdf) libra
 
 The [`RPA.Dialogs`](https://robocorp.com/docs/libraries/rpa-framework/rpa-dialogs) library manages attended UI interface.
 
-The [`RobocloudLibrary`](https://github.com/robocorp/example-salesforce-sap/blob/master/libraries/RobocloudLibrary.py) custom library is used to manage Robocloud processes via Process API.
+The [`ControlRoomLibrary`](https://github.com/robocorp/example-salesforce-sap/blob/master/libraries/ControlRoomLibrary.py) custom library is used to manage Control Room processes via Process API.
 
-Other Robotframework libraries in use are [`Collections`](https://robocorp.com/docs/libraries/built-in/collections),  [`OperatingSystem`](https://robocorp.com/docs/libraries/built-in/operatingsystem) and  [`String`](https://robocorp.com/docs/libraries/built-in/string)
+Other Robotframework libraries in use are [`Collections`](https://robocorp.com/docs/libraries/built-in/collections), [`OperatingSystem`](https://robocorp.com/docs/libraries/built-in/operatingsystem) and [`String`](https://robocorp.com/docs/libraries/built-in/string)
+
 ## Configuration
 
 Common variables for the robot are stored in [`variables.py`](https://github.com/robocorp/example-salesforce-sap/blob/master/resources/variables.py) file.
@@ -131,54 +132,55 @@ Create a new file: `/Users/<username>/vault.json`
     "connection": "SAP-CONNECTION-NAME-STRING",
     "client": "SAP-CONNECTION-CLIENT-ID",
     "user": "SAP-USERNAME",
-    "password": "SAP-PASSWORD",
+    "password": "SAP-PASSWORD"
   },
   "salesforce": {
-      "website": "URL-TO-SALESFORCE",
-      "web_username": "SALESFORCE-USERNAME",
-      "web_password": "SALESFORCE-PASSWORD",
-      "api_username": "SALESFORCE-API-USERNAME",
-      "api_password": "SALESFORCE-API-PASSWORD",
-      "api_token": "SALESFORCE-API-TOKEN"
+    "website": "URL-TO-SALESFORCE",
+    "web_username": "SALESFORCE-USERNAME",
+    "web_password": "SALESFORCE-PASSWORD",
+    "api_username": "SALESFORCE-API-USERNAME",
+    "api_password": "SALESFORCE-API-PASSWORD",
+    "api_token": "SALESFORCE-API-TOKEN"
   },
-  "cloud_api": {
-      "workspace_id": "ROBOCLOUD-WORKSPACE-ID",
-      "process_api_secret_key": "PROCESS-API-KEY",
-      "compare_process_id": "PROCESS-ID-FOR-COMPARE-PROCESS",
-      "fix_sfdc_name_process_id": "PROCESS-ID-FOR-FIX-SFDC-NAME-PROCESS",
+  "control_room_api": {
+    "workspace_id": "CONTROL-ROOM-WORKSPACE-ID",
+    "process_api_secret_key": "PROCESS-API-KEY",
+    "compare_process_id": "PROCESS-ID-FOR-COMPARE-PROCESS",
+    "fix_sfdc_name_process_id": "PROCESS-ID-FOR-FIX-SFDC-NAME-PROCESS"
   }
 }
 ```
 
 ### Create a `items.json` file for the work item variables
+
 Create a new file: `/Users/<username>/items.json`
 
 ```json
 {
+  "1": {
     "1": {
-        "1": {
-            "variables": {
-            }
-        }
+      "variables": {}
     }
+  }
 }
 ```
+
 ### Point `devdata/env.json` to your `vault.json` and `items.json` files
 
 ```json
 {
-  "RPA_SECRET_MANAGER": "RPA.Robocloud.Secrets.FileSecrets",
+  "RPA_SECRET_MANAGER": "RPA.Robocorp.Vault.FileSecrets",
   "RPA_SECRET_FILE": "/Users/<username>/vault.json",
-  "RPA_WORKITEMS_ADAPTER": "RPA.Robocloud.Items.FileAdapter",
+  "RPA_WORKITEMS_ADAPTER": "RPA.Robocorp.WorkItems.FileAdapter",
   "RPA_WORKITEMS_PATH": "/Users/<username>/items.json",
   "RC_WORKSPACE_ID": 1,
   "RC_WORKITEM_ID": 1
 }
 ```
 
-### Robocorp Cloud vault
+### Control Room vault
 
-Create new secrets with names `sap_ides`, `cloud_api` and `salesforce`. The key-value pairs can be seen above in the `vault.json`.
+Create new secrets with names `sap_ides`, `control_room_api` and `salesforce`. The key-value pairs can be seen above in the `vault.json`.
 
 ## I want to learn more!
 

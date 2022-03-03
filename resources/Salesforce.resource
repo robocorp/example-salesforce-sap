@@ -33,9 +33,9 @@ Salesforce Add or Update Accounts
         ${account_len}=    Get Length    ${account}
         ${obj}=    Create Dictionary    Name=${cus}[NAME]    AccountNumber=${cus}[ID]
         IF    ${account_len}==1
-        Upsert Salesforce Object    Account    ${account}[0][0]    ${obj}
+            Upsert Salesforce Object    Account    ${account}[0][0]    ${obj}
         ELSE IF    ${account_len}==0
-        Create Salesforce Object    Account    ${obj}
+            Create Salesforce Object    Account    ${obj}
         END
     END
 
@@ -102,8 +102,8 @@ Salesforce Create or Modify Accounts
         ${account_len}=    Get Length    ${account}
         ${obj}=    Create Dictionary    Name=${cus}[name]    AccountNumber=${cus}[id]
         IF    ${account_len}==1
-        Upsert Salesforce Object    Account    ${account}[0][0]    ${obj}
+            Upsert Salesforce Object    Account    ${account}[0][0]    ${obj}
         ELSE IF    ${account_len}==0
-        Create Salesforce Object    Account    ${obj}
+            Create Salesforce Object    Account    ${obj}
         END
     END
