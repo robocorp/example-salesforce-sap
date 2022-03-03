@@ -5,5 +5,5 @@ dependencies:
   - python=3.7.5
   - pip=20.1
   - pip:
-      - rpaframework==11.1.3
-      - rpaframework-google==0.3.0
+      - rpaframework==12.8.2
+      - rpaframework-google==2.0.0
